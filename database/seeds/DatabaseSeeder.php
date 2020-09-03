@@ -23,10 +23,10 @@ class DatabaseSeeder extends Seeder
         Service::truncate();
 //        Userinfo::truncate();
 
-        factory(User::class)->create([
-            'name' => 'Admin',
-            'email' => 'admin@mail.com',
-        ]);
+//        factory(User::class)->create([
+//            'name' => 'Admin',
+//            'email' => 'admin@mail.com',
+//        ]);
 
         factory(User::class)->create([
             'name' => 'User',

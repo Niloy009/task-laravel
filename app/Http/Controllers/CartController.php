@@ -10,15 +10,25 @@ use Illuminate\Support\Facades\Auth;
 class CartController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $carts = Cart::with('services')->get();
 
-        return view('user.index', compact('carts'));    }
+        if (Auth::user()->isAdmin === 1)
+        {
+            $carts = Cart::with('services')->get();
+            return view('user.index', compact('carts'));}
+        else{
+
+            $carts = Cart::with('services')->where('user_id', Auth::id())->latest()->get();
+            return view('user.index', compact('carts'));
+        }
+
+
+
+
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -36,18 +46,25 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        $service = Service::all();
+
+        $this->validate($request, [
+            'fname' => 'required',
+            'lname' => 'required',
+            'email' => 'required',
+            'phone' => 'required'
+        ]);
+//        $service = Service::all();
 
         $data = $request->all();
         $data['user_id'] = Auth::id();
-        $prices = $data['service_id'];
-
-        $total = 0;
-        foreach ($prices as $price) {
-            $service = Service::find($price);
-            $total += $service->price;
-        }
-        $data['total_price'] = $total;
+//        $prices = $data['service_id'];
+//
+//        $total = 0;
+//        foreach ($prices as $price) {
+//            $service = Service::find($price);
+//            $total += $service->price;
+//        }
+//        $data['total_price'] = $total;
 
         $cart = Cart::create($data);
         if (!empty($request->service_id)) {
